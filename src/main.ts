@@ -1,3 +1,8 @@
+/* ============================================================
+   Cinema Seat Manager — Prototipo funcional en TypeScript
+   Basado en los requisitos de context.txt
+   ============================================================ */
+
 type SeatMatrix = number[][];
 type SeatPosition = [number, number];
 type AdjacentPair = [SeatPosition, SeatPosition];
@@ -5,66 +10,30 @@ type AdjacentPair = [SeatPosition, SeatPosition];
 const ROWS = 8;
 const COLUMNS = 10;
 
-const PARTIAL_OCCUPIED_SEATS: SeatPosition[] = [
-  [0, 1], [0, 4], [0, 5], [0, 8],
-  [1, 0], [1, 3], [1, 6], [1, 7], [1, 9],
-  [2, 2], [2, 4], [2, 8],
-  [3, 1], [3, 5], [3, 6], [3, 9],
-  [4, 0], [4, 3], [4, 4], [4, 7],
-  [5, 2], [5, 5], [5, 8], [5, 9],
-  [6, 1], [6, 4], [6, 6],
-  [7, 0], [7, 3], [7, 7], [7, 8],
-];
+/* ---------- Funciones principales (requisito) ---------- */
 
-const ISOLATED_AVAILABLE_SEATS: SeatPosition[] = [
-  [0, 0], [1, 3], [2, 6], [3, 9], [4, 1], [5, 4], [6, 7], [7, 2],
-];
-
-/* Inicializa la sala con todas las posiciones libres usando una matriz bidimensional. */
+/* Inicializa una matriz de asientos (arreglo bidimensional) de 8 filas x 10 columnas.
+   Todos los asientos comienzan en 0 (disponibles). */
 function initializeSeatMatrix(rows: number, columns: number): SeatMatrix {
   return Array.from({ length: rows }, () => Array(columns).fill(0));
 }
 
-/* Devuelve una copia de la sala para probar escenarios sin mutar la matriz original. */
-function cloneSeatMatrix(seats: SeatMatrix): SeatMatrix {
-  return seats.map((row) => [...row]);
-}
-
-/* Marca como ocupadas las posiciones indicadas en la lista de coordenadas. */
-function occupySeats(seats: SeatMatrix, positions: SeatPosition[]): void {
-  for (const [row, column] of positions) {
-    seats[row][column] = 1;
-  }
-}
-
-/* Convierte toda la sala en ocupada y luego libera solo los asientos indicados. */
-function createNearlyFullRoom(rows: number, columns: number, freeSeats: SeatPosition[]): SeatMatrix {
-  const seats = Array.from({ length: rows }, () => Array(columns).fill(1));
-
-  for (const [row, column] of freeSeats) {
-    seats[row][column] = 0;
-  }
-
-  return seats;
-}
-
-/* Muestra la sala en consola con coordenadas y el estado visual L o X para cada asiento. */
+/* Muestra el estado actual de la sala imprimiendo la matriz en consola.
+   Usa X para ocupados y L para libres. Incluye números de fila y columna. */
 function displayRoom(seats: SeatMatrix, title: string): void {
   console.log(`\n${title}`);
-  console.log(`    ${Array.from({ length: seats[0].length }, (_, index) => index).join(" ")}`);
+  console.log(`   ${Array.from({ length: seats[0].length }, (_, i) => i).join(" ")}`);
 
   for (let row = 0; row < seats.length; row += 1) {
-    const visualRow = seats[row].map((seat) => (seat === 1 ? "X" : "L")).join(" ");
+    const visualRow = seats[row].map((s) => (s === 1 ? "X" : "L")).join(" ");
     console.log(`${row.toString().padStart(2, " ")}  ${visualRow}`);
   }
 }
 
-/* Intenta reservar un asiento validando límites y disponibilidad antes de ocuparlo. */
+/* Reserva un asiento dado un número de fila y columna (cambia valor de 0 a 1).
+   Valida límites y disponibilidad antes de reservar. */
 function reserveSeat(seats: SeatMatrix, row: number, column: number): string {
-  const rowExists = row >= 0 && row < seats.length;
-  const columnExists = rowExists && column >= 0 && column < seats[row].length;
-
-  if (!rowExists || !columnExists) {
+  if (row < 0 || row >= seats.length || column < 0 || column >= seats[row].length) {
     return `No se pudo reservar el asiento (${row}, ${column}) porque está fuera de la sala.`;
   }
 
@@ -76,7 +45,7 @@ function reserveSeat(seats: SeatMatrix, row: number, column: number): string {
   return `Reserva confirmada para el asiento (${row}, ${column}).`;
 }
 
-/* Cuenta cuántos asientos están ocupados y cuántos siguen disponibles en toda la sala. */
+/* Cuenta y devuelve cuántos asientos están ocupados y cuántos disponibles. */
 function countSeats(seats: SeatMatrix): [number, number] {
   let occupied = 0;
   let available = 0;
@@ -94,7 +63,8 @@ function countSeats(seats: SeatMatrix): [number, number] {
   return [occupied, available];
 }
 
-/* Busca el primer par horizontal de asientos libres y devuelve sus dos posiciones. */
+/* Busca el primer par de asientos libres contiguos horizontalmente (misma fila).
+   Devuelve sus posiciones como un par de coordenadas, o null si no hay. */
 function findAdjacentPair(seats: SeatMatrix): AdjacentPair | null {
   for (let row = 0; row < seats.length; row += 1) {
     for (let column = 0; column < seats[row].length - 1; column += 1) {
@@ -107,7 +77,7 @@ function findAdjacentPair(seats: SeatMatrix): AdjacentPair | null {
   return null;
 }
 
-/* Informa en consola el conteo total y el resultado de la búsqueda de asientos contiguos. */
+/* Reporta el estado completo de la sala en consola: conteo + búsqueda de par contiguo. */
 function reportRoomStatus(seats: SeatMatrix): void {
   const [occupied, available] = countSeats(seats);
   const adjacentPair = findAdjacentPair(seats);
@@ -116,163 +86,252 @@ function reportRoomStatus(seats: SeatMatrix): void {
   console.log(`Asientos disponibles: ${available}`);
 
   if (adjacentPair) {
-    const [[firstRow, firstColumn], [secondRow, secondColumn]] = adjacentPair;
-    console.log(
-      `Primer par contiguo encontrado en (${firstRow}, ${firstColumn}) y (${secondRow}, ${secondColumn}).`,
-    );
-    return;
+    const [[r1, c1], [r2, c2]] = adjacentPair;
+    console.log(`Primer par contiguo encontrado en (${r1}, ${c1}) y (${r2}, ${c2}).`);
+  } else {
+    console.log("No hay pares de asientos contiguos disponibles.");
   }
-
-  console.log("No hay pares de asientos contiguos disponibles.");
 }
 
-/* Ejecuta varios escenarios para comprobar la lógica principal pedida en la consigna. */
+/* ---------- Escenarios de prueba (requisito) ---------- */
+
 function runConsoleScenarios(): void {
+  console.log("==========================================");
+  console.log("  CINEMA SEAT MANAGER — PRUEBAS");
+  console.log("==========================================");
+
+  // Escenario 1: Sala vacía (todos los asientos disponibles)
   const emptyRoom = initializeSeatMatrix(ROWS, COLUMNS);
-  displayRoom(emptyRoom, "Escenario 1: Sala vacia");
+  displayRoom(emptyRoom, "Escenario 1: Sala vacía");
   reportRoomStatus(emptyRoom);
   console.log(reserveSeat(emptyRoom, 2, 4));
-  console.log(reserveSeat(emptyRoom, 2, 4));
+  console.log(reserveSeat(emptyRoom, 2, 4)); // Debe fallar: ya ocupado
 
-  const partiallyOccupiedRoom = initializeSeatMatrix(ROWS, COLUMNS);
-  occupySeats(partiallyOccupiedRoom, PARTIAL_OCCUPIED_SEATS);
-  displayRoom(partiallyOccupiedRoom, "Escenario 2: Sala parcialmente ocupada");
-  reportRoomStatus(partiallyOccupiedRoom);
+  // Escenario 2: Sala parcialmente ocupada
+  const partialRoom = initializeSeatMatrix(ROWS, COLUMNS);
+  const partialSeats: SeatPosition[] = [
+    [0, 1], [0, 4], [0, 5], [0, 8],
+    [1, 0], [1, 3], [1, 6], [1, 7], [1, 9],
+    [2, 2], [2, 4], [2, 8],
+    [3, 1], [3, 5], [3, 6], [3, 9],
+    [4, 0], [4, 3], [4, 4], [4, 7],
+    [5, 2], [5, 5], [5, 8], [5, 9],
+    [6, 1], [6, 4], [6, 6],
+    [7, 0], [7, 3], [7, 7], [7, 8],
+  ];
+  for (const [r, c] of partialSeats) {
+    partialRoom[r][c] = 1;
+  }
+  displayRoom(partialRoom, "Escenario 2: Sala parcialmente ocupada");
+  reportRoomStatus(partialRoom);
 
-  const nearlyFullRoom = createNearlyFullRoom(ROWS, COLUMNS, ISOLATED_AVAILABLE_SEATS);
-  displayRoom(nearlyFullRoom, "Escenario 3: Sala casi llena con asientos sueltos");
+  // Escenario 3: Sala casi llena (solo asientos sueltos disponibles)
+  const isolatedAvailables: SeatPosition[] = [
+    [0, 0], [1, 3], [2, 6], [3, 9], [4, 1], [5, 4], [6, 7], [7, 2],
+  ];
+  const nearlyFullRoom = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(1));
+  for (const [r, c] of isolatedAvailables) {
+    nearlyFullRoom[r][c] = 0;
+  }
+  displayRoom(nearlyFullRoom, "Escenario 3: Sala casi llena (solo asientos sueltos)");
   reportRoomStatus(nearlyFullRoom);
 
-  const fullRoom = createNearlyFullRoom(ROWS, COLUMNS, []);
+  // Escenario 4: Sala completamente llena
+  const fullRoom = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(1));
   displayRoom(fullRoom, "Escenario 4: Sala completamente llena");
   reportRoomStatus(fullRoom);
+
+  // Prueba de validación: fuera de límites
+  console.log(reserveSeat(emptyRoom, 20, 5));
+
+  console.log("\n==========================================");
+  console.log("  FIN DE PRUEBAS");
+  console.log("==========================================");
 }
 
-/* Construye la interfaz web usando la misma matriz para mostrar, contar y reservar asientos. */
-function renderCinema(container: HTMLElement, seats: SeatMatrix): void {
-  const adjacentPair = findAdjacentPair(seats);
-  const [occupied, available] = countSeats(seats);
+/* Ejecuta las pruebas de consola siempre */
+runConsoleScenarios();
 
-  const adjacentSeatKeys = adjacentPair
-    ? adjacentPair.map(([row, column]) => `${row}-${column}`)
+/* ============================================================
+   EXTRA OPCIONAL: Interfaz web con selección visual de asientos
+   ============================================================ */
+
+/* Conjunto de asientos seleccionados temporalmente (pendientes de reservar en la web). */
+const selectedSeats = new Set<string>();
+
+function seatKey(row: number, column: number): string {
+  return `${row}-${column}`;
+}
+
+/* Alterna selección de un asiento libre. */
+function toggleSelection(row: number, column: number): string {
+  const key = seatKey(row, column);
+  if (selectedSeats.has(key)) {
+    selectedSeats.delete(key);
+    return `Asiento (${row}, ${column}) deseleccionado.`;
+  }
+  selectedSeats.add(key);
+  return `Asiento (${row}, ${column}) seleccionado.`;
+}
+
+/* Reserva todos los asientos seleccionados. */
+function confirmSelection(seats: SeatMatrix): string {
+  if (selectedSeats.size === 0) {
+    return "No hay asientos seleccionados para reservar.";
+  }
+
+  const reserved: string[] = [];
+  const alreadyTaken: string[] = [];
+
+  for (const key of selectedSeats) {
+    const [r, c] = key.split("-").map(Number);
+    if (seats[r][c] === 1) {
+      alreadyTaken.push(`(${r}, ${c})`);
+    } else {
+      seats[r][c] = 1;
+      reserved.push(`(${r}, ${c})`);
+    }
+  }
+
+  selectedSeats.clear();
+
+  let msg = "";
+  if (reserved.length > 0) msg += `${reserved.length} reservado(s): ${reserved.join(", ")}. `;
+  if (alreadyTaken.length > 0) msg += `${alreadyTaken.length} ya ocupado(s): ${alreadyTaken.join(", ")}.`;
+  return msg || "No se realizaron reservas.";
+}
+
+/* Limpia toda la sala y la selección. */
+function resetRoom(seats: SeatMatrix): string {
+  for (let r = 0; r < seats.length; r += 1) {
+    for (let c = 0; c < seats[r].length; c += 1) {
+      seats[r][c] = 0;
+    }
+  }
+  selectedSeats.clear();
+  return "Todos los asientos han sido liberados. La sala está completamente vacía.";
+}
+
+/* Construye la interfaz web visual. */
+function renderCinema(container: HTMLElement, seats: SeatMatrix): void {
+  const [occupied, available] = countSeats(seats);
+  const adjacentPair = findAdjacentPair(seats);
+  const adjacentKeys = adjacentPair
+    ? adjacentPair.map(([r, c]) => seatKey(r, c))
     : [];
 
   const seatRows = seats
-    .map((row, rowIndex) => {
-      const seatButtons = row
-        .map((seat, columnIndex) => {
-          const seatState = seat === 1 ? "occupied" : "available";
-          const isAdjacentSeat = adjacentSeatKeys.includes(`${rowIndex}-${columnIndex}`);
-          const variant = isAdjacentSeat ? "adjacent" : seatState;
-          const symbol = seat === 1 ? "X" : "L";
-          const status = seat === 1 ? "Ocupado" : "Libre";
+    .map((row, ri) => {
+      const buttons = row
+        .map((seat, ci) => {
+          const key = seatKey(ri, ci);
+          const isOccupied = seat === 1;
+          const isSelected = selectedSeats.has(key);
+          const isAdjacent = adjacentKeys.includes(key) && !isOccupied;
 
-          return `
-            <button
-              class="seat seat--${variant}"
-              data-row="${rowIndex}"
-              data-column="${columnIndex}"
-              aria-label="Fila ${rowIndex}, asiento ${columnIndex}, ${status}"
-            >
-              ${symbol}
-            </button>
-          `;
+          let variant = "available";
+          let symbol = "L";
+          if (isOccupied) { variant = "occupied"; symbol = "X"; }
+          else if (isSelected) { variant = "selected"; symbol = "●"; }
+          else if (isAdjacent) { variant = "adjacent"; symbol = "◎"; }
+
+          return `<button class="seat seat--${variant}" data-row="${ri}" data-col="${ci}">${symbol}</button>`;
         })
         .join("");
-
-      return `
-        <div class="seat-row">
-          <span class="seat-row__label">${rowIndex}</span>
-          <div class="seat-row__grid">${seatButtons}</div>
-        </div>
-      `;
+      return `<div class="seat-row"><span class="seat-row__label">${ri}</span><div class="seat-row__grid">${buttons}</div></div>`;
     })
     .join("");
 
-  const adjacentMessage = adjacentPair
-    ? `Par contiguo sugerido: fila ${adjacentPair[0][0]}, columnas ${adjacentPair[0][1]} y ${adjacentPair[1][1]}.`
-    : "No hay pares contiguos disponibles en este momento.";
+  const adjMsg = adjacentPair
+    ? `Par contiguo: fila ${adjacentPair[0][0]}, cols ${adjacentPair[0][1]} y ${adjacentPair[1][1]}`
+    : "No hay pares contiguos disponibles.";
 
   container.innerHTML = `
     <section class="cinema-shell">
       <div class="cinema-card">
         <div class="cinema-copy">
-          <p class="eyebrow">Cinema Seat Manager</p>
-          <h1>Gestor de asientos del cine</h1>
-          <p class="lead">
-            Prototipo basado en una matriz de ${ROWS} filas por ${COLUMNS} columnas. Haz clic en un asiento libre para reservarlo.
-          </p>
+          <p class="eyebrow">🎬 Cinema Seat Manager</p>
+          <h1>Gestor de asientos</h1>
+          <p class="lead">Sala de ${ROWS} filas × ${COLUMNS} columnas. Selecciona asientos libres y presiona "Reservar".</p>
           <div class="summary-grid">
-            <article>
-              <span>Ocupados</span>
-              <strong>${occupied}</strong>
-            </article>
-            <article>
-              <span>Disponibles</span>
-              <strong>${available}</strong>
-            </article>
-            <article>
-              <span>Primer par</span>
-              <strong>${adjacentPair ? "Encontrado" : "Sin par"}</strong>
-            </article>
+            <article><span>Ocupados</span><strong>${occupied}</strong></article>
+            <article><span>Disponibles</span><strong>${available}</strong></article>
+            <article><span>Seleccionados</span><strong>${selectedSeats.size}</strong></article>
           </div>
-          <p id="status-message" class="status-message">${adjacentMessage}</p>
+          <div class="actions">
+            <button id="btn-reserve" class="btn btn--primary">✓ Reservar seleccionados</button>
+            <button id="btn-reset" class="btn btn--secondary">↺ Resetear sala</button>
+          </div>
+          <p id="status-message" class="status-message">${adjMsg}</p>
         </div>
-
         <div class="hall-panel">
-          <div class="screen">SCREEN</div>
-
+          <div class="screen">PANTALLA</div>
           <div class="column-labels">
             <span class="corner"></span>
-            ${Array.from({ length: COLUMNS }, (_, column) => `<span>${column}</span>`).join("")}
+            ${Array.from({ length: COLUMNS }, (_, c) => `<span>${c}</span>`).join("")}
           </div>
-
           <div class="seat-layout">${seatRows}</div>
-
           <div class="legend">
-            <div class="legend-item"><span class="seat seat--available">L</span><span>Available (0)</span></div>
-            <div class="legend-item"><span class="seat seat--occupied">X</span><span>Occupied (1)</span></div>
-            <div class="legend-item"><span class="seat seat--adjacent">L</span><span>Adjacent pair</span></div>
+            <span class="legend-item"><span class="seat seat--available">L</span> Libre</span>
+            <span class="legend-item"><span class="seat seat--selected">●</span> Seleccionado</span>
+            <span class="legend-item"><span class="seat seat--occupied">X</span> Ocupado</span>
+            <span class="legend-item"><span class="seat seat--adjacent">◎</span> Par contiguo</span>
           </div>
         </div>
       </div>
     </section>
   `;
 
-  const messageElement = container.querySelector<HTMLElement>("#status-message");
+  const msgEl = container.querySelector<HTMLElement>("#status-message");
 
-  for (const button of container.querySelectorAll<HTMLButtonElement>(".seat")) {
-    button.addEventListener("click", () => {
-      const row = Number(button.dataset.row);
-      const column = Number(button.dataset.column);
-      const result = reserveSeat(seats, row, column);
-
-      if (messageElement) {
-        messageElement.textContent = result;
+  /* Clic en asientos */
+  for (const btn of container.querySelectorAll<HTMLButtonElement>(".seat")) {
+    btn.addEventListener("click", () => {
+      const r = Number(btn.dataset.row);
+      const c = Number(btn.dataset.col);
+      if (seats[r][c] === 1) {
+        if (msgEl) msgEl.textContent = `El asiento (${r}, ${c}) ya está ocupado.`;
+        return;
       }
-
+      const res = toggleSelection(r, c);
+      if (msgEl) msgEl.textContent = res;
       renderCinema(container, seats);
+      const nm = container.querySelector<HTMLElement>("#status-message");
+      if (nm) nm.textContent = res;
+    });
+  }
 
-      const nextMessageElement = container.querySelector<HTMLElement>("#status-message");
-      if (nextMessageElement) {
-        nextMessageElement.textContent = result;
-      }
+  /* Botón Reservar */
+  const reserveBtn = container.querySelector<HTMLButtonElement>("#btn-reserve");
+  if (reserveBtn) {
+    reserveBtn.addEventListener("click", () => {
+      const res = confirmSelection(seats);
+      if (msgEl) msgEl.textContent = res;
+      renderCinema(container, seats);
+      const nm = container.querySelector<HTMLElement>("#status-message");
+      if (nm) nm.textContent = res;
+    });
+  }
+
+  /* Botón Reset */
+  const resetBtn = container.querySelector<HTMLButtonElement>("#btn-reset");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      const res = resetRoom(seats);
+      if (msgEl) msgEl.textContent = res;
+      renderCinema(container, seats);
+      const nm = container.querySelector<HTMLElement>("#status-message");
+      if (nm) nm.textContent = res;
     });
   }
 }
 
-runConsoleScenarios();
-
+/* Inicializa la web si estamos en un navegador */
 if (typeof document !== "undefined") {
   import("./style.css").then(() => {
     const app = document.querySelector<HTMLElement>("#app");
-    const visualRoom = initializeSeatMatrix(ROWS, COLUMNS);
-
-    occupySeats(visualRoom, PARTIAL_OCCUPIED_SEATS);
-
-    if (app) {
-      renderCinema(app, cloneSeatMatrix(visualRoom));
-    }
+    const room = initializeSeatMatrix(ROWS, COLUMNS);
+    if (app) renderCinema(app, room);
   });
 }
 
