@@ -1,111 +1,44 @@
-# Hola Mundo con Typescript
+# HTML Hello
 
-<!-- hide -->
-> Por [@ehiber](https://github.com/ehiber) y contribuidores de [4Geeks Academy](https://4geeksacademy.com/)
+El boilerplate más básico para cualquier estudiante de 4Geeks Academy, empieza tu primer sitio web desde cero.
 
-[![build by developers](https://img.shields.io/badge/build_by-Developers-blue)](https://4geeks.com)
-[![twitter](https://img.shields.io/twitter/follow/4geeksacademy?style=social&logo=twitter)](https://twitter.com/4geeksacademy)
+> Tienes un video tutorial sobre [cómo usar esta plantilla para crear tu primer sitio web aquí](https://youtu.be/dfbDCMu_p-0).
 
-*These instructions are available in [english](./README.md).*
-<!-- endhide -->
+## ¿Qué hacer a continuación?
 
-Empieza a programar un sitio con TypeScript/HTML/CSS en 30 segundos abriendo esta plantilla con [One-Click Coding](https://s.4geeks.com/start?repo=https://github.com/4GeeksAcademy/typescript-hello) de 4Geeks o en tu computadora local.
-
-## Antes de empezar
-
-Instala los paquetes escribiendo:
+Crea un archivo `index.html` con [la estructura básica de HTML](https://4geeks.com/es/lesson/what-is-html-learn-html-es#estructura-de-pgina) y ve el resultado en vivo corriendo un servidor web utilizando el siguiente comando:
 
 ```bash
-npm install
+$ pip3 install flask && python3 server.py
 ```
 
-## Como ejecuto mi sitio para ver cambios en vivo?
-
-Escribe en la linea de comandos:
-
-```bash
-npm run start
-```
-
-Luego abre la URL local en el navegador (normalmente `http://localhost:5173`).
-
-## Como ejecuto esto en GitHub Codespaces?
-
-Usa el mismo servidor de desarrollo:
-
-```bash
-npm run start
-```
-
-Vite esta configurado para escuchar en `0.0.0.0`, asi que Codespaces puede detectar y redirigir automaticamente el puerto `5173`.
-
-## Como ejecuto solo la validacion de TypeScript?
-
-Usa este comando para validar solo TypeScript sin iniciar Vite:
-
-```bash
-npm run typecheck
-```
-
-## Como ejecuto `main.ts` desde la terminal?
-
-Si quieres ejecutar `./src/main.ts` directamente y ver la salida de `console.log` en la terminal, usa:
-
-```bash
-npm run console
-```
-
-Este comando ya viene conectado por defecto a `./src/main.ts`.
-
-## Donde escribo mi codigo?
-
-Depende del lenguaje:
-
-- `./src/main.ts` para la logica en TypeScript.
-- `./src/style.css` para estilos (Tailwind CSS v4 ya viene importado).
-- `./index.html` para el HTML base.
-
-Puedes agregar mas archivos cuando quieras, solo asegúrate de importarlos desde `main.ts`.
-
-Nota: si puedes ver la tarjeta de "Hello Rigo" y el mensaje "If you can see this, Tailwind is working.", entonces Tailwind esta configurado correctamente.
-
-## Solucion de problemas
-
-### No veo mis cambios...
-
-Cada vez que cambias cualquier archivo dentro de `./src`, el sitio se refresca automaticamente (hot reload).
-
-Si aun no ves cambios, recarga limpiando cache:
-
-- Mac: `Cmd + Shift + R`
-- Windows/Linux: `Ctrl + Shift + R`
-
-## Como incluyo mas imagenes en mi proyecto?
-
-Agregalas dentro de `./public` y referencialas en HTML con `/nombre-imagen.ext`.
-
-Ejemplo:
+- Puedes crear tantos archivos HTML cómo desees.
+- También puedes crear archivos CSS e importarlos en tu página web utilizando una etiqueta `<link>` ubicándola entre las etiquetas `<head></head>`, de la siguiente manera:
 
 ```html
-<img src="/rigo-baby.jpg" alt="Rigo" />
+<head>
+  ...
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  ...
+</head>
 ```
 
-## Como incluyo mas archivos TypeScript?
+- Si deseas usar Tailwind CSS, agrégalo de forma opcional mediante el CDN oficial de Tailwind CSS v4 dentro del mismo `<head>`:
 
-Agrega archivos en `./src` e importalos desde `main.ts`.
-
-Ejemplo:
-
-```ts
-import { myVar } from "./file2";
+```html
+<head>
+  ...
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  ...
+</head>
 ```
 
-## Como publico el sitio?
 
-Este boilerplate es compatible con Vercel en un solo paso.
+## Agradecimientos
 
-## Contribuidores
+Esta y otras plantillas son utilizadas para [aprender a programar](https://4geeksacademy.com/es/aprender-a-programar/aprender-a-programar-desde-cero) por parte de los alumnos de 4Geeks Academy [Coding Bootcamp](https://4geeksacademy.com/us/coding-bootcamp). 
 
-Esta plantilla fue creada como parte del [Coding Bootcamp de 4Geeks Academy](https://4geeksacademy.com/us/coding-bootcamp) por [ehiber](https://github.com/ehiber) y otros contribuidores. Conoce mas sobre nuestro [AI Engineering Course](https://4geeksacademy.com/us/coding-bootcamps/ai-engineering), [Full Stack Developer Course](https://4geeksacademy.com/us/coding-bootcamps/part-time-full-stack-developer), y [Data Science Bootcamp](https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning).
+Realizado por [Alejandro Sánchez](https://twitter.com/alesanchezr) y muchos otros contribuyentes. 
 
-Puedes encontrar otras plantillas y recursos como este en la [pagina de GitHub de la escuela](https://github.com/4geeksacademy/).
+Conoce más sobre nuestros [Cursos de Programación](https://4geeksacademy.com/es/curso-de-programacion-desde-cero/?lang=es) para convertirte en [Full Stack Developer](https://4geeksacademy.com/es/desarrollador-full-stack/desarrollador-full-stack), o nuestro [Data Science Bootcamp](https://4geeksacademy.com/es/coding-bootcamps/curso-datascience-machine-learning).

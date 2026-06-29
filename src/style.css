@@ -1,1 +1,260 @@
 @import "tailwindcss";
+
+:root {
+	color: #243746;
+	background:
+		radial-gradient(circle at top, rgba(87, 179, 186, 0.15), transparent 35%),
+		linear-gradient(180deg, #f5f2ea 0%, #ece4d4 100%);
+	font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+}
+
+button {
+	font: inherit;
+}
+
+.cinema-shell {
+	min-height: 100vh;
+	padding: 32px;
+}
+
+.cinema-card {
+	display: grid;
+	grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+	gap: 28px;
+	max-width: 1220px;
+	margin: 0 auto;
+	padding: 32px;
+	border: 1px solid rgba(73, 92, 99, 0.12);
+	border-radius: 32px;
+	background: rgba(255, 250, 242, 0.92);
+	box-shadow: 0 22px 60px rgba(74, 65, 42, 0.14);
+	backdrop-filter: blur(14px);
+}
+
+.cinema-copy {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.eyebrow {
+	margin: 0;
+	color: #b76b2d;
+	font-size: 0.84rem;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.cinema-copy h1 {
+	margin: 0;
+	color: #253746;
+	font-size: clamp(2.1rem, 4vw, 3.4rem);
+	line-height: 0.96;
+}
+
+.lead {
+	margin: 0;
+	color: #53646f;
+	font-size: 1rem;
+	line-height: 1.7;
+}
+
+.summary-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.summary-grid article {
+	padding: 16px;
+	border: 1px solid rgba(73, 92, 99, 0.16);
+	border-radius: 18px;
+	background: rgba(255, 255, 255, 0.7);
+}
+
+.summary-grid span {
+	display: block;
+	color: #6f7c85;
+	font-size: 0.83rem;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+
+.summary-grid strong {
+	display: block;
+	margin-top: 8px;
+	color: #253746;
+	font-size: 1.6rem;
+}
+
+.status-message {
+	margin: 0;
+	padding: 16px 18px;
+	border-left: 4px solid #f0ae4b;
+	border-radius: 14px;
+	background: rgba(255, 239, 213, 0.72);
+	color: #6d5324;
+	line-height: 1.6;
+}
+
+.hall-panel {
+	padding: 22px 24px 26px;
+	border-radius: 28px;
+	background: linear-gradient(180deg, #fffdf9 0%, #f4eee2 100%);
+	border: 1px solid rgba(73, 92, 99, 0.1);
+}
+
+.screen {
+	width: min(420px, 70%);
+	margin: 0 auto 24px;
+	padding: 12px 0;
+	text-align: center;
+	color: #564f45;
+	letter-spacing: 0.16em;
+	font-size: 1.05rem;
+	background: linear-gradient(180deg, #d7d1c7 0%, #c9c2b6 100%);
+	clip-path: polygon(8% 0%, 92% 0%, 84% 100%, 16% 100%);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.column-labels {
+	display: grid;
+	grid-template-columns: 34px repeat(10, minmax(0, 1fr));
+	gap: 8px;
+	align-items: center;
+	margin-bottom: 10px;
+	color: #6c7c87;
+	font-size: 0.95rem;
+}
+
+.corner {
+	display: block;
+}
+
+.column-labels span {
+	text-align: center;
+}
+
+.seat-layout {
+	display: grid;
+	gap: 8px;
+}
+
+.seat-row {
+	display: grid;
+	grid-template-columns: 34px minmax(0, 1fr);
+	gap: 8px;
+	align-items: center;
+}
+
+.seat-row__label {
+	color: #6c7c87;
+	font-size: 0.95rem;
+	text-align: center;
+}
+
+.seat-row__grid {
+	display: grid;
+	grid-template-columns: repeat(10, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.seat {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 44px;
+	border-radius: 10px;
+	border: 2px solid transparent;
+	font-weight: 700;
+	transition:
+		transform 120ms ease,
+		box-shadow 120ms ease,
+		border-color 120ms ease,
+		background-color 120ms ease;
+}
+
+.seat[data-row] {
+	cursor: pointer;
+}
+
+.seat[data-row]:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 8px 18px rgba(55, 86, 90, 0.14);
+}
+
+.seat--available {
+	color: #1e5c5d;
+	border-color: #57b3ba;
+	background: #dff4ef;
+}
+
+.seat--occupied {
+	color: #8c4b35;
+	border-color: #f0855b;
+	background: #fff1eb;
+}
+
+.seat--adjacent {
+	color: #915c17;
+	border-color: #e49a33;
+	background: #ffd188;
+	box-shadow: inset 0 0 0 2px rgba(255, 248, 228, 0.75);
+}
+
+.legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	justify-content: center;
+	margin-top: 26px;
+	color: #4d5a65;
+}
+
+.legend-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.legend-item .seat {
+	width: 38px;
+	min-height: 38px;
+}
+
+@media (max-width: 980px) {
+	.cinema-card {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 720px) {
+	.cinema-shell {
+		padding: 16px;
+	}
+
+	.cinema-card {
+		padding: 18px;
+		border-radius: 24px;
+	}
+
+	.summary-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.hall-panel {
+		padding: 16px 12px 20px;
+		overflow-x: auto;
+	}
+
+	.seat-row__grid,
+	.column-labels {
+		min-width: 560px;
+	}
+}
